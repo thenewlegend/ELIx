@@ -1,5 +1,8 @@
 <script>
   import { marked } from 'marked';
+  import { ripple } from '$lib/actions/ripple.js';
+  import { vibrateLight, vibrateSuccess, vibrateError } from '$lib/utils/haptics.js';
+  import { showSuccess, showError } from '$lib/stores/toast.js';
 
   let topic = '';
   let age = 5;
@@ -13,7 +16,7 @@
   async function handleSubmit() {
     loading = true;
     error = '';
-    // explanation = ''; // Kept to prevent layout shift
+    vibrateLight(); // Haptic feedback on submit
 
     try {
       const response = await fetch('/api/explain', {
@@ -31,8 +34,12 @@
 
       const data = await response.json();
       explanation = data.explanation;
+      vibrateSuccess(); // Success haptic
+      showSuccess('Explanation generated!'); // Success toast
     } catch (e) {
       error = e.message;
+      vibrateError(); // Error haptic
+      showError(e.message || 'Failed to generate explanation'); // Error toast
     } finally {
       loading = false;
     }
@@ -41,7 +48,7 @@
 
 <div class="m3-container">
   <div class="m3-card">
-    <h1 class="m3-display-small">Explain Like I am X</h1>
+    <h1 class="m3-display-small">ELI-X</h1>
 
     <form on:submit|preventDefault={handleSubmit}>
       <div class="m3-text-field-container">
@@ -54,11 +61,11 @@
       <div class="m3-text-field-container">
         <div class="m3-text-field">
           <input type="number" id="age" bind:value={age} min="1" max="100" required placeholder=" " />
-          <label for="age">Explain Like I am (Age)</label>
+          <label for="age">Age</label>
         </div>
       </div>
 
-      <button type="submit" class="m3-button-filled" disabled={loading}>
+      <button type="submit" class="m3-button-filled" use:ripple disabled={loading}>
         {#if loading}
           <svg class="m3-circular-progress" viewBox="0 0 48 48">
             <circle class="path" cx="24" cy="24" r="20" fill="none" stroke-width="4"></circle>

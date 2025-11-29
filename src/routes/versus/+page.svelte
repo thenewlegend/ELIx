@@ -1,5 +1,8 @@
 <script>
   import { marked } from 'marked';
+  import { ripple } from '$lib/actions/ripple.js';
+  import { vibrateLight, vibrateSuccess, vibrateError } from '$lib/utils/haptics.js';
+  import { showSuccess, showError } from '$lib/stores/toast.js';
 
   let topic = '';
   let ageA = 5;
@@ -20,6 +23,7 @@
   async function handleSubmit() {
     loading = true;
     error = '';
+    vibrateLight();
     
     // Update displayed ages only on submit
     displayedAgeA = ageA;
@@ -48,8 +52,12 @@
 
       explanationA = dataA.explanation;
       explanationB = dataB.explanation;
+      vibrateSuccess();
+      showSuccess('Comparison complete!');
     } catch (e) {
       error = e.message;
+      vibrateError();
+      showError(e.message || 'Failed to generate comparison');
     } finally {
       loading = false;
     }
@@ -84,7 +92,7 @@
         </div>
       </div>
 
-      <button type="submit" class="m3-button-filled" disabled={loading}>
+      <button type="submit" class="m3-button-filled" use:ripple disabled={loading}>
         {#if loading}
           <svg class="m3-circular-progress" viewBox="0 0 48 48">
             <circle class="path" cx="24" cy="24" r="20" fill="none" stroke-width="4"></circle>

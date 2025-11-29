@@ -1,6 +1,8 @@
 <script>
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import Toast from '$lib/components/Toast.svelte';
+	import { toasts } from '$lib/stores/toast.js';
 	
 	let { children } = $props();
 </script>
@@ -21,6 +23,18 @@
 </nav>
 
 {@render children()}
+
+<!-- Toast Container -->
+<div class="toast-container">
+	{#each $toasts as toast (toast.id)}
+		<Toast 
+			message={toast.message} 
+			type={toast.type} 
+			duration={toast.duration}
+			onDismiss={() => toasts.dismiss(toast.id)}
+		/>
+	{/each}
+</div>
 
 <style>
 	.m3-navbar {
@@ -69,6 +83,30 @@
 
 	.m3-nav-link:active {
 		transform: scale(0.95);
+	}
+
+	/* Toast Container */
+	.toast-container {
+		position: fixed;
+		bottom: 24px;
+		right: 24px;
+		z-index: 2000;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		pointer-events: none;
+	}
+
+	.toast-container :global(*) {
+		pointer-events: auto;
+	}
+
+	@media (max-width: 640px) {
+		.toast-container {
+			bottom: 16px;
+			right: 16px;
+			left: 16px;
+		}
 	}
 
 	@media (min-width: 640px) {

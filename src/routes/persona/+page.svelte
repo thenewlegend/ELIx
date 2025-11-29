@@ -1,5 +1,8 @@
 <script>
   import { marked } from 'marked';
+  import { ripple } from '$lib/actions/ripple.js';
+  import { vibrateLight, vibrateSuccess, vibrateError } from '$lib/utils/haptics.js';
+  import { showSuccess, showError } from '$lib/stores/toast.js';
 
   let topic = '';
   let persona = 'caveman';
@@ -21,7 +24,7 @@
   async function handleSubmit() {
     loading = true;
     error = '';
-    // explanation = ''; // Keep for smooth transition
+    vibrateLight();
 
     try {
       const response = await fetch('/api/explain', {
@@ -39,8 +42,12 @@
 
       const data = await response.json();
       explanation = data.explanation;
+      vibrateSuccess();
+      showSuccess('Persona explanation generated!');
     } catch (e) {
       error = e.message;
+      vibrateError();
+      showError(e.message || 'Failed to generate explanation');
     } finally {
       loading = false;
     }
@@ -71,7 +78,7 @@
         </div>
       </div>
 
-      <button type="submit" class="m3-button-filled" disabled={loading}>
+      <button type="submit" class="m3-button-filled" use:ripple disabled={loading}>
         {#if loading}
           <svg class="m3-circular-progress" viewBox="0 0 48 48">
             <circle class="path" cx="24" cy="24" r="20" fill="none" stroke-width="4"></circle>
