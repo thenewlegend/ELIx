@@ -1,15 +1,52 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GEMINI_API_KEY } from '$env/static/private';
+import { checkRateLimit, getRateLimitStatus } from '$lib/server/rateLimit.js';
+import { getClientIP } from '$lib/server/utils.js';
 
 export async function POST({ request }) {
   try {
-    const { topic, age, persona } = await request.json();
+    const { topic, age, persona, userApiKey } = await request.json();
+
+    // Determine which API key to use
+    const apiKey = userApiKey || GEMINI_API_KEY;
+    const isUsingDefaultKey = !userApiKey;
+
+    // Apply rate limiting only when using default API key
+    if (isUsingDefaultKey) {
+      const clientIP = getClientIP(request);
+      // Check status WITHOUT incrementing first
+      const status = getRateLimitStatus(clientIP);
+
+      if (status.remaining <= 0) {
+        const resetDate = new Date(status.resetTime);
+        const minutesUntilReset = Math.ceil((status.resetTime - Date.now()) / 60000);
+
+        return new Response(
+          JSON.stringify({
+            error: 'Rate limit exceeded',
+            message: `You've reached the limit of ${status.limit} queries per 15 minutes. Please try again in ${minutesUntilReset} minutes or use your own API key.`,
+            resetTime: resetDate.toISOString(),
+            remaining: 0,
+            limit: status.limit
+          }),
+          {
+            status: 429,
+            headers: {
+              'X-RateLimit-Limit': status.limit.toString(),
+              'X-RateLimit-Remaining': '0',
+              'X-RateLimit-Reset': resetDate.toISOString(),
+              'Retry-After': (status.resetTime - Date.now()).toString()
+            }
+          }
+        );
+      }
+    }
 
     if (!topic) {
       return new Response(JSON.stringify({ error: 'Topic is required.' }), { status: 400 });
     }
 
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     let prompt = '';
@@ -65,7 +102,20 @@ export async function POST({ request }) {
     const response = await result.response;
     const explanation = response.text();
 
-    return new Response(JSON.stringify({ explanation }), { status: 200 });
+    const headers = { 'Content-Type': 'application/json' };
+
+    // Add rate limit headers if using default key
+    // AND increment the count now that we have a success
+    if (isUsingDefaultKey) {
+      const clientIP = getClientIP(request);
+      const status = checkRateLimit(clientIP); // This increments the count
+
+      headers['X-RateLimit-Limit'] = status.limit.toString();
+      headers['X-RateLimit-Remaining'] = status.remaining.toString();
+      headers['X-RateLimit-Reset'] = new Date(status.resetTime).toISOString();
+    }
+
+    return new Response(JSON.stringify({ explanation }), { status: 200, headers });
   } catch (e) {
     console.error("API Error:", e);
     return new Response(JSON.stringify({ error: e.message || 'Failed to generate explanation.' }), { status: 500 });

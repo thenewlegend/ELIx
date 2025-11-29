@@ -3,6 +3,8 @@
   import { ripple } from '$lib/actions/ripple.js';
   import { vibrateLight, vibrateSuccess, vibrateError } from '$lib/utils/haptics.js';
   import { showSuccess, showError } from '$lib/stores/toast.js';
+  import { getApiKeyConfig } from '$lib/stores/apiKey.js';
+  import { updateRateLimitFromHeaders } from '$lib/stores/rateLimit.js';
 
   let topic = '';
   let age = 5;
@@ -19,16 +21,31 @@
     vibrateLight(); // Haptic feedback on submit
 
     try {
+      const { apiKey } = getApiKeyConfig();
+      
       const response = await fetch('/api/explain', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ topic, age })
+        body: JSON.stringify({ 
+          topic, 
+          age,
+          userApiKey: apiKey 
+        })
       });
+
+      // Update rate limit info from headers
+      updateRateLimitFromHeaders(response.headers);
 
       if (!response.ok) {
         const errorData = await response.json();
+        
+        // Special handling for rate limit errors
+        if (response.status === 429) {
+          throw new Error(errorData.message || 'Rate limit exceeded. Please use your own API key.');
+        }
+        
         throw new Error(errorData.error || 'Something went wrong');
       }
 

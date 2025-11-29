@@ -3,6 +3,8 @@
   import { ripple } from '$lib/actions/ripple.js';
   import { vibrateLight, vibrateSuccess, vibrateError } from '$lib/utils/haptics.js';
   import { showSuccess, showError } from '$lib/stores/toast.js';
+  import { getApiKeyConfig } from '$lib/stores/apiKey.js';
+  import { updateRateLimitFromHeaders } from '$lib/stores/rateLimit.js';
 
   let topic = '';
   let ageA = 5;
@@ -30,20 +32,36 @@
     displayedAgeB = ageB;
 
     try {
+      const { apiKey } = getApiKeyConfig();
+
       const [resA, resB] = await Promise.all([
         fetch('/api/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, age: ageA })
+          body: JSON.stringify({ topic, age: ageA, userApiKey: apiKey })
         }),
         fetch('/api/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, age: ageB })
+          body: JSON.stringify({ topic, age: ageB, userApiKey: apiKey })
         })
       ]);
 
+      // Update rate limit info from headers (use the one with fewer remaining)
+      if (resA.headers.has('X-RateLimit-Remaining')) {
+         updateRateLimitFromHeaders(resA.headers);
+      }
+      if (resB.headers.has('X-RateLimit-Remaining')) {
+         updateRateLimitFromHeaders(resB.headers);
+      }
+
       if (!resA.ok || !resB.ok) {
+        // Check for rate limits
+        if (resA.status === 429 || resB.status === 429) {
+          const errorData = resA.status === 429 ? await resA.json() : await resB.json();
+          throw new Error(errorData.message || 'Rate limit exceeded. Please use your own API key.');
+        }
+        
         throw new Error('Failed to fetch one or both explanations.');
       }
 
