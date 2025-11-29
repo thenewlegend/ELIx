@@ -2,18 +2,26 @@
   import { marked } from 'marked';
 
   let topic = '';
-  let age = 5;
+  let persona = 'caveman';
   let explanation = '';
   let loading = false;
   let error = '';
 
-  // Reactive variable to store the HTML version of the explanation
+  const personas = [
+    { id: 'caveman', name: 'Caveman', icon: '🪨' },
+    { id: 'genz', name: 'Gen Z / Brainrot', icon: '💀' },
+    { id: 'shakespeare', name: 'Shakespeare', icon: '🎭' },
+    { id: 'conspiracy', name: 'Conspiracy Theorist', icon: '👽' },
+    { id: 'ramsay', name: 'Gordon Ramsay', icon: '👨‍🍳' },
+    { id: 'programmer', name: 'Programmer', icon: '💻' }
+  ];
+
   $: formattedExplanation = explanation ? marked.parse(explanation) : '';
 
   async function handleSubmit() {
     loading = true;
     error = '';
-    // explanation = ''; // Kept to prevent layout shift
+    // explanation = ''; // Keep for smooth transition
 
     try {
       const response = await fetch('/api/explain', {
@@ -21,7 +29,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ topic, age })
+        body: JSON.stringify({ topic, persona })
       });
 
       if (!response.ok) {
@@ -41,7 +49,7 @@
 
 <div class="m3-container">
   <div class="m3-card">
-    <h1 class="m3-display-small">Explain Like I am X</h1>
+    <h1 class="m3-display-small">Persona Mode</h1>
 
     <form on:submit|preventDefault={handleSubmit}>
       <div class="m3-text-field-container">
@@ -52,9 +60,14 @@
       </div>
 
       <div class="m3-text-field-container">
-        <div class="m3-text-field">
-          <input type="number" id="age" bind:value={age} min="1" max="100" required placeholder=" " />
-          <label for="age">Explain Like I am (Age)</label>
+        <div class="m3-select-container">
+          <label for="persona" class="m3-select-label">Choose Persona</label>
+          <select id="persona" bind:value={persona} class="m3-select">
+            {#each personas as p}
+              <option value={p.id}>{p.icon} {p.name}</option>
+            {/each}
+          </select>
+          <div class="m3-select-arrow">▼</div>
         </div>
       </div>
 
@@ -72,7 +85,6 @@
     {#if explanation}
       <div class="m3-surface-variant output-area" class:loading-content={loading}>
         <h2 class="m3-headline-small">Explanation</h2>
-        <!-- Render the Markdown as HTML using Svelte's @html directive -->
         <div class="markdown-content">
           {@html formattedExplanation}
         </div>
@@ -88,7 +100,7 @@
 </div>
 
 <style>
-  /* Container & Card */
+  /* Reuse M3 Styles */
   .m3-container {
     display: flex;
     justify-content: center;
@@ -114,7 +126,6 @@
     }
   }
 
-  /* Typography */
   .m3-display-small {
     font-family: var(--md-sys-typescale-headline-large-font);
     font-size: var(--md-sys-typescale-headline-large-size);
@@ -132,7 +143,6 @@
     margin: 0 0 16px 0;
   }
 
-  /* Text Fields (Outlined) */
   .m3-text-field-container {
     margin-bottom: 24px;
   }
@@ -180,7 +190,6 @@
     z-index: 2;
   }
 
-  /* Floating Label Logic */
   .m3-text-field input:focus + label,
   .m3-text-field input:not(:placeholder-shown) + label {
     top: 0;
@@ -188,15 +197,56 @@
     color: var(--md-sys-color-primary);
   }
 
-  .m3-text-field input:not(:placeholder-shown) + label {
-     color: var(--md-sys-color-on-surface-variant);
-  }
-  
-  .m3-text-field input:focus + label {
-    color: var(--md-sys-color-primary);
+  /* Select Styling */
+  .m3-select-container {
+    position: relative;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 4px;
+    height: 56px;
+    display: flex;
+    align-items: center;
   }
 
-  /* Filled Button */
+  .m3-select-container:focus-within {
+    border-color: var(--md-sys-color-primary);
+    border-width: 2px;
+  }
+
+  .m3-select {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    padding: 0 16px;
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    color: var(--md-sys-color-on-surface);
+    outline: none;
+    appearance: none;
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  .m3-select-label {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    font-size: 12px;
+    color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-surface);
+    padding: 0 4px;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+
+  .m3-select-arrow {
+    position: absolute;
+    right: 16px;
+    color: var(--md-sys-color-on-surface-variant);
+    pointer-events: none;
+    font-size: 12px;
+  }
+
   .m3-button-filled {
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
@@ -217,7 +267,7 @@
 
   .m3-button-filled:hover {
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-    opacity: 0.92; /* State layer simulation */
+    opacity: 0.92;
   }
 
   .m3-button-filled:disabled {
@@ -227,7 +277,6 @@
     cursor: not-allowed;
   }
 
-  /* Output Area */
   .m3-surface-variant {
     background-color: var(--md-sys-color-surface-variant);
     color: var(--md-sys-color-on-surface-variant);
@@ -246,7 +295,6 @@
     line-height: 1.5;
   }
 
-  /* Error Message */
   .m3-error-message {
     background-color: var(--md-sys-color-error-container);
     color: var(--md-sys-color-on-error-container);
@@ -255,7 +303,6 @@
     margin-top: 24px;
   }
 
-  /* Circular Progress */
   .m3-circular-progress {
     animation: rotate 2s linear infinite;
     height: 24px;

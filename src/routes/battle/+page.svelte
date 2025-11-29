@@ -2,40 +2,52 @@
   import { marked } from 'marked';
 
   let topic = '';
-  let ageA = 5;
-  let ageB = 40;
+  let personaA = 'philosopher';
+  let personaB = 'scientist';
   
-  // Store the ages used for the current explanation to prevent reactive updates while typing
-  let displayedAgeA = 5;
-  let displayedAgeB = 40;
+  // Store displayed personas to prevent reactive updates while typing
+  let displayedPersonaA = 'philosopher';
+  let displayedPersonaB = 'scientist';
 
   let explanationA = '';
   let explanationB = '';
   let loading = false;
   let error = '';
 
+  const battlePersonas = [
+    { id: 'philosopher', name: 'Philosopher', icon: '🤔' },
+    { id: 'scientist', name: 'Scientist', icon: '🔬' },
+    { id: 'boomer', name: 'Boomer', icon: '👴' },
+    { id: 'zoomer', name: 'Zoomer', icon: '🛹' },
+    { id: 'optimist', name: 'Optimist', icon: '☀️' },
+    { id: 'pessimist', name: 'Pessimist', icon: '🌧️' }
+  ];
+
   $: formattedExplanationA = explanationA ? marked.parse(explanationA) : '';
   $: formattedExplanationB = explanationB ? marked.parse(explanationB) : '';
+
+  function getPersonaName(id) {
+    return battlePersonas.find(p => p.id === id)?.name || id;
+  }
 
   async function handleSubmit() {
     loading = true;
     error = '';
     
-    // Update displayed ages only on submit
-    displayedAgeA = ageA;
-    displayedAgeB = ageB;
+    displayedPersonaA = personaA;
+    displayedPersonaB = personaB;
 
     try {
       const [resA, resB] = await Promise.all([
         fetch('/api/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, age: ageA })
+          body: JSON.stringify({ topic, persona: personaA })
         }),
         fetch('/api/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, age: ageB })
+          body: JSON.stringify({ topic, persona: personaB })
         })
       ]);
 
@@ -58,7 +70,7 @@
 
 <div class="m3-container">
   <div class="m3-card">
-    <h1 class="m3-display-small">ELI-X Versus</h1>
+    <h1 class="m3-display-small">Battle Mode</h1>
 
     <form on:submit|preventDefault={handleSubmit}>
       <div class="m3-text-field-container">
@@ -70,16 +82,28 @@
 
       <div class="input-row">
         <div class="m3-text-field-container">
-          <div class="m3-text-field">
-            <input type="number" id="ageA" bind:value={ageA} min="1" max="100" required placeholder=" " />
-            <label for="ageA">Age A</label>
+          <div class="m3-select-container">
+            <label for="personaA" class="m3-select-label">Contender A</label>
+            <select id="personaA" bind:value={personaA} class="m3-select">
+              {#each battlePersonas as p}
+                <option value={p.id}>{p.icon} {p.name}</option>
+              {/each}
+            </select>
+            <div class="m3-select-arrow">▼</div>
           </div>
         </div>
 
+        <div class="vs-badge">VS</div>
+
         <div class="m3-text-field-container">
-          <div class="m3-text-field">
-            <input type="number" id="ageB" bind:value={ageB} min="1" max="100" required placeholder=" " />
-            <label for="ageB">Age B</label>
+          <div class="m3-select-container">
+            <label for="personaB" class="m3-select-label">Contender B</label>
+            <select id="personaB" bind:value={personaB} class="m3-select">
+              {#each battlePersonas as p}
+                <option value={p.id}>{p.icon} {p.name}</option>
+              {/each}
+            </select>
+            <div class="m3-select-arrow">▼</div>
           </div>
         </div>
       </div>
@@ -90,7 +114,7 @@
             <circle class="path" cx="24" cy="24" r="20" fill="none" stroke-width="4"></circle>
           </svg>
         {:else}
-          Compare
+          Fight!
         {/if}
       </button>
     </form>
@@ -104,14 +128,14 @@
     {#if explanationA || explanationB}
       <div class="comparison-container" class:loading-content={loading}>
         <div class="m3-surface-variant output-column">
-          <h2 class="m3-headline-small">Age {displayedAgeA} (ELI{displayedAgeA})</h2>
+          <h2 class="m3-headline-small">{getPersonaName(displayedPersonaA)}</h2>
           <div class="markdown-content">
             {@html formattedExplanationA}
           </div>
         </div>
 
         <div class="m3-surface-variant output-column">
-          <h2 class="m3-headline-small">Age {displayedAgeB} (ELI{displayedAgeB})</h2>
+          <h2 class="m3-headline-small">{getPersonaName(displayedPersonaB)}</h2>
           <div class="markdown-content">
             {@html formattedExplanationB}
           </div>
@@ -122,8 +146,7 @@
 </div>
 
 <style>
-  /* Reuse M3 Styles from +page.svelte (Ideally these should be global or shared components) */
-  /* Container & Card */
+  /* Reuse M3 Styles */
   .m3-container {
     display: flex;
     justify-content: center;
@@ -149,7 +172,6 @@
     }
   }
 
-  /* Typography */
   .m3-display-small {
     font-family: var(--md-sys-typescale-headline-large-font);
     font-size: var(--md-sys-typescale-headline-large-size);
@@ -161,7 +183,7 @@
 
   .m3-headline-small {
     font-family: var(--md-sys-typescale-headline-large-font);
-    font-size: 20px; /* Slightly smaller for columns */
+    font-size: 20px;
     font-weight: 500;
     color: var(--md-sys-color-on-surface-variant);
     margin: 0 0 16px 0;
@@ -170,7 +192,6 @@
     padding-bottom: 8px;
   }
 
-  /* Text Fields (Outlined) */
   .m3-text-field-container {
     margin-bottom: 24px;
     width: 100%;
@@ -179,6 +200,13 @@
   .input-row {
     display: flex;
     gap: 16px;
+    align-items: center;
+  }
+
+  .vs-badge {
+    font-weight: bold;
+    color: var(--md-sys-color-primary);
+    margin-bottom: 24px; /* Align with inputs */
   }
 
   .m3-text-field {
@@ -224,7 +252,6 @@
     z-index: 2;
   }
 
-  /* Floating Label Logic */
   .m3-text-field input:focus + label,
   .m3-text-field input:not(:placeholder-shown) + label {
     top: 0;
@@ -232,15 +259,56 @@
     color: var(--md-sys-color-primary);
   }
 
-  .m3-text-field input:not(:placeholder-shown) + label {
-     color: var(--md-sys-color-on-surface-variant);
-  }
-  
-  .m3-text-field input:focus + label {
-    color: var(--md-sys-color-primary);
+  /* Select Styling */
+  .m3-select-container {
+    position: relative;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 4px;
+    height: 56px;
+    display: flex;
+    align-items: center;
   }
 
-  /* Filled Button */
+  .m3-select-container:focus-within {
+    border-color: var(--md-sys-color-primary);
+    border-width: 2px;
+  }
+
+  .m3-select {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    padding: 0 16px;
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    color: var(--md-sys-color-on-surface);
+    outline: none;
+    appearance: none;
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  .m3-select-label {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    font-size: 12px;
+    color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-surface);
+    padding: 0 4px;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+
+  .m3-select-arrow {
+    position: absolute;
+    right: 16px;
+    color: var(--md-sys-color-on-surface-variant);
+    pointer-events: none;
+    font-size: 12px;
+  }
+
   .m3-button-filled {
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
@@ -261,7 +329,7 @@
 
   .m3-button-filled:hover {
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-    opacity: 0.92; /* State layer simulation */
+    opacity: 0.92;
   }
 
   .m3-button-filled:disabled {
@@ -296,7 +364,6 @@
     line-height: 1.5;
   }
 
-  /* Error Message */
   .m3-error-message {
     background-color: var(--md-sys-color-error-container);
     color: var(--md-sys-color-on-error-container);
@@ -305,7 +372,6 @@
     margin-top: 24px;
   }
 
-  /* Circular Progress */
   .m3-circular-progress {
     animation: rotate 2s linear infinite;
     height: 24px;
@@ -347,6 +413,9 @@
     }
     .comparison-container {
       flex-direction: column;
+    }
+    .vs-badge {
+      margin: 0 0 16px 0;
     }
   }
 </style>
