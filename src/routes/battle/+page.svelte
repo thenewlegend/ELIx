@@ -50,12 +50,22 @@
         fetch('/api/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, persona: personaA, userApiKey: apiKey })
+          body: JSON.stringify({ 
+            topic, 
+            persona: personaA, 
+            opponentPersona: personaB,
+            userApiKey: apiKey 
+          })
         }),
         fetch('/api/explain', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, persona: personaB, userApiKey: apiKey })
+          body: JSON.stringify({ 
+            topic, 
+            persona: personaB,
+            opponentPersona: personaA,
+            userApiKey: apiKey 
+          })
         })
       ]);
 
