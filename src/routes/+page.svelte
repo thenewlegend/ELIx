@@ -1,14 +1,19 @@
-<script lang="ts">
-  let topic: string = '';
-  let age: number = 5;
-  let explanation: string = '';
-  let loading: boolean = false;
-  let error: string = '';
+<script>
+  import { marked } from 'marked';
+
+  let topic = '';
+  let age = 5;
+  let explanation = '';
+  let loading = false;
+  let error = '';
+
+  // Reactive variable to store the HTML version of the explanation
+  $: formattedExplanation = explanation ? marked.parse(explanation) : '';
 
   async function handleSubmit() {
     loading = true;
     error = '';
-    explanation = '';
+    explanation = ''; // Clear previous explanation
 
     try {
       const response = await fetch('/api/explain', {
@@ -26,7 +31,7 @@
 
       const data = await response.json();
       explanation = data.explanation;
-    } catch (e: any) {
+    } catch (e) {
       error = e.message;
     } finally {
       loading = false;
@@ -60,7 +65,8 @@
   {#if explanation}
     <div class="output-area">
       <h2>Explanation:</h2>
-      <p>{explanation}</p>
+      <!-- Render the Markdown as HTML using Svelte's @html directive -->
+      {@html formattedExplanation}
     </div>
   {/if}
 
