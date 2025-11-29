@@ -1,0 +1,81 @@
+{
+  "general": {
+    "preferredEditor": "code",
+    "vimMode": false,
+    "enablePromptCompletion": true,
+    "checkpointing": {
+      "enabled": false
+    },
+    "sessionRetention": {
+      "enabled": true,
+      "maxAge": "30d",
+      "maxCount": 50,
+      "minRetention": "1d"
+    }
+  },
+  "ui": {
+    "theme": "GitHub",
+    "useFullWidth": true,
+    "showLineNumbers": true,
+    "showMemoryUsage": true,
+    "showCitations": true,
+    "hideBanner": true,
+    "hideTips": true,
+    "customWittyPhrases": [
+      "Hasta la vista policekara"
+    ]
+  },
+  "model": {
+    "name": "gemini-2.5-flash",
+    "maxSessionTurns": 1000,
+    "compressionThreshold": 0.2,
+    "summarizeToolOutput": {
+      "run_shell_command": {
+        "tokenBudget": 100
+      }
+    }
+  },
+  "modelConfigs": {
+    "aliases": {}
+  },
+  "context": {
+    "fileName": [
+      "GEMINI.md",
+      "CONTEXT.md"
+    ],
+    "includeDirectories": [],
+    "loadMemoryFromIncludeDirectories": false,
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true,
+      "enableRecursiveFileSearch": true,
+      "disableFuzzySearch": false
+    }
+  },
+  "tools": {},
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+  "telemetry": {
+    "enabled": false,
+    "logPrompts": false
+  },
+  "advanced": {
+    "excludedEnvVars": [
+      "DEBUG",
+      "DEBUG_MODE"
+    ]
+  },
+  "experimental": {
+    "extensionManagement": true,
+    "extensionReloading": false,
+    "useModelRouter": true,
+    "codebaseInvestigatorSettings": {
+      "enabled": true,
+      "maxNumTurns": 10,
+      "maxTimeMinutes": 3,
+      "thinkingBudget": 8192,
+      "model": "gemini-2.5-flash"
+    }
+  }
+}
