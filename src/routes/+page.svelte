@@ -13,7 +13,7 @@
   async function handleSubmit() {
     loading = true;
     error = '';
-    explanation = ''; // Clear previous explanation
+    // explanation = ''; // Kept to prevent layout shift
 
     try {
       const response = await fetch('/api/explain', {
@@ -39,127 +39,248 @@
   }
 </script>
 
-<div class="eli-x-container">
-  <h1>Explain Like I am X</h1>
+<div class="m3-container">
+  <div class="m3-card">
+    <h1 class="m3-display-small">Explain Like I am X</h1>
 
-  <form on:submit|preventDefault={handleSubmit}>
-    <div class="form-group">
-      <label for="topic">Topic:</label>
-      <input type="text" id="topic" bind:value={topic} required />
-    </div>
+    <form on:submit|preventDefault={handleSubmit}>
+      <div class="m3-text-field-container">
+        <div class="m3-text-field">
+          <input type="text" id="topic" bind:value={topic} required placeholder=" " />
+          <label for="topic">Topic</label>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label for="age">Explain Like I am:</label>
-      <input type="number" id="age" bind:value={age} min="1" max="100" required />
-    </div>
+      <div class="m3-text-field-container">
+        <div class="m3-text-field">
+          <input type="number" id="age" bind:value={age} min="1" max="100" required placeholder=" " />
+          <label for="age">Explain Like I am (Age)</label>
+        </div>
+      </div>
 
-    <button type="submit" disabled={loading}>
-      {#if loading}
-        Loading...
-      {:else}
-        Send
-      {/if}
-    </button>
-  </form>
+      <button type="submit" class="m3-button-filled" disabled={loading}>
+        {#if loading}
+          <svg class="m3-circular-progress" viewBox="0 0 48 48">
+            <circle class="path" cx="24" cy="24" r="20" fill="none" stroke-width="4"></circle>
+          </svg>
+        {:else}
+          Explain
+        {/if}
+      </button>
+    </form>
 
-  {#if explanation}
-    <div class="output-area">
-      <h2>Explanation:</h2>
-      <!-- Render the Markdown as HTML using Svelte's @html directive -->
-      {@html formattedExplanation}
-    </div>
-  {/if}
+    {#if explanation}
+      <div class="m3-surface-variant output-area" class:loading-content={loading}>
+        <h2 class="m3-headline-small">Explanation</h2>
+        <!-- Render the Markdown as HTML using Svelte's @html directive -->
+        <div class="markdown-content">
+          {@html formattedExplanation}
+        </div>
+      </div>
+    {/if}
 
-  {#if error}
-    <div class="error-message">
-      <p>Error: {error}</p>
-    </div>
-  {/if}
+    {#if error}
+      <div class="m3-error-message">
+        <p>Error: {error}</p>
+      </div>
+    {/if}
+  </div>
 </div>
 
 <style>
-  .eli-x-container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
+  /* Container & Card */
+  .m3-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+    background-color: var(--md-sys-color-background);
   }
 
-  h1 {
+  .m3-card {
+    background-color: var(--md-sys-color-surface);
+    border-radius: 28px;
+    padding: 24px;
+    width: 100%;
+    max-width: 600px;
+    /* Elevation 1 */
+    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30);
+    transition: height 0.3s ease; /* Attempt to smooth height changes */
+  }
+
+  /* Typography */
+  .m3-display-small {
+    font-family: var(--md-sys-typescale-headline-large-font);
+    font-size: var(--md-sys-typescale-headline-large-size);
+    font-weight: var(--md-sys-typescale-headline-large-weight);
+    color: var(--md-sys-color-on-surface);
+    margin: 0 0 32px 0;
     text-align: center;
-    color: #333;
-    margin-bottom: 30px;
   }
 
-  .form-group {
-    margin-bottom: 15px;
+  .m3-headline-small {
+    font-family: var(--md-sys-typescale-headline-large-font);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--md-sys-color-on-surface-variant);
+    margin: 0 0 16px 0;
   }
 
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+  /* Text Fields (Outlined) */
+  .m3-text-field-container {
+    margin-bottom: 24px;
   }
 
-  input[type="text"],
-  input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+  .m3-text-field {
+    position: relative;
+    border: 1px solid var(--md-sys-color-outline);
     border-radius: 4px;
-    box-sizing: border-box;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    transition: border-color 0.2s;
   }
 
-  button {
-    display: block;
+  .m3-text-field:focus-within {
+    border-color: var(--md-sys-color-primary);
+    border-width: 2px;
+  }
+
+  .m3-text-field input {
     width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
+    height: 100%;
+    background: transparent;
     border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    padding: 0 16px;
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    color: var(--md-sys-color-on-surface);
+    outline: none;
+    z-index: 1;
   }
 
-  button:disabled {
-    background-color: #cccccc;
+  .m3-text-field label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--md-sys-color-surface);
+    padding: 0 4px;
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    color: var(--md-sys-color-on-surface-variant);
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Floating Label Logic */
+  .m3-text-field input:focus + label,
+  .m3-text-field input:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 12px;
+    color: var(--md-sys-color-primary);
+  }
+
+  .m3-text-field input:not(:placeholder-shown) + label {
+     color: var(--md-sys-color-on-surface-variant);
+  }
+  
+  .m3-text-field input:focus + label {
+    color: var(--md-sys-color-primary);
+  }
+
+  /* Filled Button */
+  .m3-button-filled {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    height: 40px;
+    border-radius: 20px;
+    border: none;
+    padding: 0 24px;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s, box-shadow 0.2s;
+  }
+
+  .m3-button-filled:hover {
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+    opacity: 0.92; /* State layer simulation */
+  }
+
+  .m3-button-filled:disabled {
+    background-color: rgba(28, 27, 31, 0.12);
+    color: rgba(28, 27, 31, 0.38);
+    box-shadow: none;
     cursor: not-allowed;
   }
 
-  button:hover:not(:disabled) {
-    background-color: #0056b3;
+  /* Output Area */
+  .m3-surface-variant {
+    background-color: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 24px;
+    transition: opacity 0.2s ease;
+  }
+  
+  .loading-content {
+    opacity: 0.5;
   }
 
-  .output-area {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 4px;
+  .markdown-content :global(p) {
+    margin-bottom: 1em;
+    line-height: 1.5;
   }
 
-  .output-area h2 {
-    color: #333;
-    margin-top: 0;
+  /* Error Message */
+  .m3-error-message {
+    background-color: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 24px;
   }
 
-  .output-area p {
-    color: #666;
-    line-height: 1.6;
+  /* Circular Progress */
+  .m3-circular-progress {
+    animation: rotate 2s linear infinite;
+    height: 24px;
+    width: 24px;
   }
 
-  .error-message {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #ffe0e0;
-    border: 1px solid #ff0000;
-    border-radius: 4px;
-    color: #ff0000;
+  .m3-circular-progress .path {
+    stroke: var(--md-sys-color-on-primary);
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
+    }
   }
 </style>
