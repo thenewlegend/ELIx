@@ -1,38 +1,278 @@
-# sv
+# ELI-X 🎓
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+**Explain Like I'm X** - Complex topics, simplified for any age.
 
-## Creating a project
+ELI-X is an AI-powered web application that transforms complex topics into easy-to-understand explanations tailored to any age level or persona. Built with SvelteKit and powered by Google's Gemini AI, it offers multiple modes for learning and comparing explanations.
 
-If you're seeing this, you've probably already done this step. Congrats!
+![Material Design 3](https://img.shields.io/badge/Material%20Design-3-6750A4)
+![SvelteKit](https://img.shields.io/badge/SvelteKit-5-FF3E00)
+![Gemini AI](https://img.shields.io/badge/Gemini-AI-4285F4)
 
-```sh
-# create a new project in the current directory
-npx sv create
+---
 
-# create a new project in my-app
-npx sv create my-app
+## ✨ Features
+
+### 🎯 Multiple Explanation Modes
+
+- **Explain Mode**: Get simple explanations for any topic at any age level (1-100)
+- **Versus Mode**: Compare explanations side-by-side for two different age levels
+- **Persona Mode**: Hear explanations from unique characters:
+  - 🪨 Caveman - Primitive, all-caps simplicity
+  - 💀 Gen Z - Brainrot slang and chaotic energy
+  - 🎭 Shakespeare - Flowery Early Modern English
+  - 👽 Conspiracy Theorist - Everything connects to "Them"
+  - 👨‍🍳 Gordon Ramsay - Aggressive culinary insults
+  - 💻 Programmer - Software engineering analogies
+- **Battle Mode**: Watch personas debate from opposing viewpoints:
+  - 🤔 Philosopher vs 🔬 Scientist
+  - 👴 Boomer vs 🛹 Zoomer
+  - ☀️ Optimist vs 🌧️ Pessimist
+
+### 🎨 Premium UI/UX
+
+- **Material Design 3**: Modern, polished interface with M3 color tokens and typography
+- **Glassmorphism**: Frosted glass navbar with backdrop blur
+- **Micro-interactions**:
+  - Button press feedback (scale animations)
+  - Material ripple effects on all buttons
+  - Layered shadows for depth
+  - Staggered entrance animations
+- **Haptic Feedback**: Subtle vibrations on mobile devices (where supported)
+- **Toast Notifications**: Success/error feedback for all actions
+- **Responsive Design**: Seamless experience from mobile (320px) to 4K displays
+- **Accessibility**: Respects `prefers-reduced-motion` and includes proper ARIA labels
+
+---
+
+## 🏗️ Architecture
+
+### Technology Stack
+
+```
+Frontend:  SvelteKit 5 (Svelte 5 with Runes)
+Styling:   Tailwind CSS + Custom M3 Tokens
+AI Model:  Google Gemini 2.5 Flash
+Runtime:   Node.js
 ```
 
-## Developing
+### Project Structure
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```
+ELIx/
+├── src/
+│   ├── lib/
+│   │   ├── components/
+│   │   │   ├── Toast.svelte          # Toast notification component
+│   │   │   └── Skeleton.svelte       # Loading skeleton component
+│   │   ├── stores/
+│   │   │   └── toast.js              # Global toast state management
+│   │   ├── actions/
+│   │   │   └── ripple.js             # Material ripple effect action
+│   │   └── utils/
+│   │       └── haptics.js            # Haptic feedback utility
+│   ├── routes/
+│   │   ├── +layout.svelte            # Global layout with navbar & toasts
+│   │   ├── +page.svelte              # Landing page with mode cards
+│   │   ├── explain/+page.svelte      # Standard explanation mode
+│   │   ├── versus/+page.svelte       # Side-by-side comparison
+│   │   ├── persona/+page.svelte      # Character-driven explanations
+│   │   ├── battle/+page.svelte       # Persona vs Persona debates
+│   │   └── api/
+│   │       └── explain/+server.js    # Gemini API integration
+│   └── routes/layout.css             # M3 design tokens & animations
+└── IDEAS.md                          # Future feature ideas
+```
 
-```sh
+### API Flow
+
+```mermaid
+graph LR
+    A[User Input] --> B[SvelteKit Frontend]
+    B --> C[API Route /api/explain]
+    C --> D[Gemini 2.5 Flash]
+    D --> E[Persona-Specific Prompt]
+    E --> F[AI Response]
+    F --> C
+    C --> B
+    B --> G[Formatted Display]
+```
+
+### Key Design Decisions
+
+1. **Server-Side API Proxy**: Gemini API key stored securely as environment variable
+2. **Progressive Enhancement**: All interactive features degrade gracefully
+3. **Mobile-First**: Responsive design starts at 320px width
+4. **Svelte Actions**: Reusable behaviors (ripple effect) via `use:` directive
+5. **Stores for Global State**: Toast notifications managed via Svelte stores
+6. **CSS Custom Properties**: M3 design tokens for consistent theming
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- Google Gemini API Key ([Get one here](https://aistudio.google.com/app/apikey))
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/thenewlegend/ELIx.git
+cd ELIx
+
+# Install dependencies
+npm install
+
+# Create .env file
+echo "GEMINI_API_KEY=your_api_key_here" > .env
+
+# Start development server
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Visit `http://localhost:5173` to see the app in action!
 
-To create a production version of your app:
+### Building for Production
 
-```sh
+```bash
+# Create optimized build
 npm run build
+
+# Preview production build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+---
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## 🎯 Usage Examples
+
+### Explain Mode
+```
+Topic: "Quantum Computing"
+Age: 8
+→ Gets child-friendly explanation with simple analogies
+```
+
+### Versus Mode
+```
+Topic: "Climate Change"
+Age A: 10  |  Age B: 40
+→ Compares explanations side-by-side
+```
+
+### Persona Mode
+```
+Topic: "Blockchain"
+Persona: Shakespeare
+→ "Hark! A ledger distributed amongst the realm..."
+```
+
+### Battle Mode
+```
+Topic: "Social Media"
+Philosopher vs Scientist
+→ Two contrasting perspectives in debate format
+```
+
+---
+
+## 🎨 UI Polish Features
+
+### Implemented Enhancements
+
+✅ **Micro-interactions**
+- Button press feedback (scale 0.96 on active)
+- Card lift on hover with layered shadows
+- Input focus animations
+
+✅ **Motion Design**
+- Staggered entrance animations (fade-in-up)
+- Skeleton loading screens
+- Smooth page transitions
+
+✅ **Interaction Feedback**
+- Material ripple effects
+- Toast notifications (success/error)
+- Haptic feedback on mobile
+
+✅ **Visual Polish**
+- Glassmorphism navbar (backdrop blur)
+- Animated gradients
+- Responsive typography with `clamp()`
+
+---
+
+## 🔧 Configuration
+
+### Environment Variables
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### Customizing Personas
+
+Edit `/src/routes/api/explain/+server.js` to add or modify persona prompts:
+
+```javascript
+case 'your_persona':
+  prompt = `Explain "${topic}" as [character description]...`;
+  break;
+```
+
+---
+
+## 📱 Browser Support
+
+- ✅ Chrome/Edge 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
+
+**Progressive Features**:
+- Haptic feedback: Mobile only (Vibration API)
+- Backdrop blur: Modern browsers only
+- Animations: Disabled if `prefers-reduced-motion: reduce`
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+### AI-Powered Development
+
+This project was built with significant assistance from AI tools:
+
+- **[Google Gemini AI](https://deepmind.google/technologies/gemini/)**: Powers the core explanation generation using Gemini 2.5 Flash model
+- **[Gemini CLI (Antigravity)](https://github.com/google/generative-ai-cli)**: AI-powered coding assistant that helped architect, implement, and polish the entire application
+  - Designed the Material Design 3 implementation
+  - Implemented responsive layouts and micro-interactions
+  - Created the persona system and battle mode
+  - Added UI polish features (toasts, ripples, haptics)
+  - Provided architectural guidance and best practices
+
+**Built with AI, for humans.** 🤖❤️👨‍💻
+
+
+---
+
+**Made with ❤️ using SvelteKit, Gemini AI, and Antigravity**
