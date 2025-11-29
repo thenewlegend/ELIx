@@ -55,8 +55,9 @@
       resetToastShown = false;
     }
 
-    const minutes = Math.ceil(diff / 60000);
-    timeRemaining = `${minutes}m`;
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    timeRemaining = `${minutes}m ${seconds}s`;
   }
 
   onMount(() => {

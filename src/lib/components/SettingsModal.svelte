@@ -7,7 +7,6 @@
   
   let localKey = $state('');
   let localUseKey = $state(false);
-  let validating = $state(false);
   
   // Initialize from store
   $effect(() => {
@@ -15,42 +14,17 @@
     localUseKey = $useUserKey;
   });
   
-  async function handleSave() {
+  function handleSave() {
     if (localUseKey && !localKey.trim()) {
       toasts.error('Please enter an API key or disable "Use my API key"');
       return;
-    }
-
-    if (localUseKey) {
-      validating = true;
-      try {
-        const response = await fetch('/api/validate-key', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ apiKey: localKey.trim() })
-        });
-        
-        const data = await response.json();
-        
-        if (!data.valid) {
-          toasts.error('Invalid API Key. Please check and try again.');
-          validating = false;
-          return;
-        }
-      } catch (e) {
-        toasts.error('Failed to validate API key.');
-        validating = false;
-        return;
-      } finally {
-        validating = false;
-      }
     }
     
     userApiKey.set(localKey.trim());
     useUserKey.set(localUseKey);
     
     if (localUseKey) {
-      toasts.success('Your API key has been verified and saved!');
+      toasts.success('Your API key has been saved!');
     } else {
       toasts.success('Settings saved. Using default API key.');
     }
@@ -164,13 +138,8 @@
           class="m3-button filled-button" 
           onclick={handleSave}
           use:ripple
-          disabled={validating}
         >
-          {#if validating}
-            Validating...
-          {:else}
-            Save
-          {/if}
+          Save
         </button>
       </div>
     </div>
