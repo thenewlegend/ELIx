@@ -1,20 +1,28 @@
 <script>
-  // No script needed for static links
+  import { onMount } from 'svelte';
+  
+  let cardsVisible = false;
+  
+  onMount(() => {
+    // Trigger entrance animation after mount
+    setTimeout(() => {
+      cardsVisible = true;
+    }, 100);
+  });
 </script>
 
 <div class="m3-container">
-  <div class="hero-section">
+  <div class="hero-section" class:visible={cardsVisible}>
     <h1 class="m3-display-large">ELI-X</h1>
     <p class="m3-headline-small">Complex topics, simplified for any age.</p>
   </div>
 
   <div class="card-grid">
     <!-- Explain Card -->
-    <a href="/explain" class="m3-card interactive">
+    <a href="/explain" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 0">
       <div class="card-content">
         <div class="icon-container primary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
-            <path d="M480-120q-33 0-56.5-23.5T400-200q0-33 23.5-56.5T480-280q33 0 56.5 23.5T560-200q0 33-23.5 56.5T480-120Zm-80-240v-80h160v80H400Zm80-160q33 0 56.5-23.5T560-600q0-33-23.5-56.5T480-680q-33 0-56.5 23.5T400-600q0 33 23.5 56.5T480-520ZM200-800v-160h160v160H200Zm400 0v-160h160v160H600Zm-400 400v-160h160v160H200Zm400 0v-160h160v160H600ZM200 0v-160h160v160H200Zm400 0v-160h160v160H600Z"/> <!-- Placeholder Icon -->
             <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
           </svg>
         </div>
@@ -24,7 +32,7 @@
     </a>
 
     <!-- Versus Card -->
-    <a href="/versus" class="m3-card interactive">
+    <a href="/versus" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 1">
       <div class="card-content">
         <div class="icon-container secondary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
@@ -37,7 +45,7 @@
     </a>
 
     <!-- Persona Card -->
-    <a href="/persona" class="m3-card interactive">
+    <a href="/persona" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 2">
       <div class="card-content">
         <div class="icon-container tertiary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
@@ -50,11 +58,11 @@
     </a>
 
     <!-- Battle Card -->
-    <a href="/battle" class="m3-card interactive">
+    <a href="/battle" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 3">
       <div class="card-content">
         <div class="icon-container secondary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
-            <path d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-400l80-80v480h-80Zm160 0v-560l80-80v640h-80Zm160 0v-720l80-80v800h-80Z"/> <!-- Placeholder for Battle/Stats -->
+            <path d="M120-120v-80l80-80v160h-80Zm160 0v-240l80-80v320h-80Zm160 0v-400l80-80v480h-80Zm160 0v-560l80-80v640h-80Zm160 0v-720l80-80v800h-80Z"/>
           </svg>
         </div>
         <h2 class="m3-headline-medium">Battle</h2>
@@ -63,7 +71,7 @@
     </a>
 
     <!-- Coming Soon Card -->
-    <div class="m3-card disabled">
+    <div class="m3-card disabled" class:visible={cardsVisible} style="--delay: 4">
       <div class="card-content">
         <div class="icon-container tertiary-container" style="background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface-variant);">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
@@ -96,6 +104,14 @@
     width: 100%;
     max-width: 800px;
     padding: 0 8px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--transition-slow), transform var(--transition-slow);
+  }
+
+  .hero-section.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .m3-display-large {
@@ -129,23 +145,55 @@
     background-color: var(--md-sys-color-surface);
     border-radius: 32px;
     padding: 16px;
-    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30);
-    transition: all 0.2s ease;
+    box-shadow: 
+      0px 1px 2px rgba(0, 0, 0, 0.3),
+      0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+    transition: transform var(--transition-normal), 
+                box-shadow var(--transition-normal),
+                background-color var(--transition-fast),
+                opacity var(--transition-slow);
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
     min-height: 140px;
+    will-change: transform;
+    opacity: 0;
+    transform: translateY( 30px);
+  }
+
+  .m3-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeInUp var(--transition-slow) ease-out;
+    animation-delay: calc(var(--delay) * 80ms);
+    animation-fill-mode: backwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .m3-card.interactive:hover {
-    box-shadow: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30);
+    box-shadow: 
+      0px 4px 8px rgba(0, 0, 0, 0.2),
+      0px 2px 4px 2px rgba(0, 0, 0, 0.15);
     background-color: var(--md-sys-color-surface-variant);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
   }
 
   .m3-card.interactive:active {
-    transform: translateY(0);
+    transform: translateY(-2px) scale(0.98);
+    box-shadow: 
+      0px 2px 4px rgba(0, 0, 0, 0.2),
+      0px 1px 2px 1px rgba(0, 0, 0, 0.15);
   }
 
   .m3-card.disabled {

@@ -29,11 +29,14 @@
 		left: 0;
 		right: 0;
 		height: 64px;
-		background-color: var(--md-sys-color-surface);
+		background-color: rgba(255, 251, 254, 0.8);
+		backdrop-filter: blur(12px) saturate(180%);
+		-webkit-backdrop-filter: blur(12px) saturate(180%);
 		display: flex;
 		align-items: center;
 		padding: 0 16px;
-		box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+		box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+		border-bottom: 1px solid rgba(121, 116, 126, 0.15);
 		z-index: 1000;
 		overflow-x: auto;
 		overflow-y: hidden;
@@ -48,7 +51,9 @@
 		margin-right: 16px;
 		padding: 8px 12px;
 		border-radius: 20px;
-		transition: background-color 0.2s;
+		transition: background-color var(--transition-fast),
+		            color var(--transition-fast),
+		            transform var(--transition-fast);
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -60,6 +65,10 @@
 	.m3-nav-link:hover {
 		background-color: var(--md-sys-color-secondary-container);
 		color: var(--md-sys-color-on-secondary-container);
+	}
+
+	.m3-nav-link:active {
+		transform: scale(0.95);
 	}
 
 	@media (min-width: 640px) {

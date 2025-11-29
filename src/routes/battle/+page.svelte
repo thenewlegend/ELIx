@@ -332,6 +332,11 @@
     opacity: 0.92;
   }
 
+  .m3-button-filled:active {
+    transform: scale(0.96);
+    box-shadow: 0px 1px 2px rgba(0, 0,  0, 0.2);
+  }
+
   .m3-button-filled:disabled {
     background-color: rgba(28, 27, 31, 0.12);
     color: rgba(28, 27, 31, 0.38);
