@@ -190,8 +190,10 @@
 
   @media (max-width: 640px) {
     .rate-limit-pill {
-      bottom: 80px; /* Above bottom nav/toast area on mobile */
-      left: 16px;
+      top: 72px; /* Below navbar */
+      right: 16px;
+      bottom: auto;
+      left: auto;
     }
   }
 </style>

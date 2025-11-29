@@ -1,6 +1,6 @@
 <script>
   import { userApiKey, useUserKey } from '$lib/stores/apiKey.js';
-  import { toasts } from '$lib/stores/toast.js';
+  import { showSuccess, showError } from '$lib/stores/toast.js';
   import { ripple } from '$lib/actions/ripple.js';
   
   let { isOpen = $bindable(false) } = $props();
@@ -16,7 +16,7 @@
   
   function handleSave() {
     if (localUseKey && !localKey.trim()) {
-      toasts.error('Please enter an API key or disable "Use my API key"');
+      showError('Please enter an API key or disable "Use my API key"');
       return;
     }
     
@@ -24,9 +24,9 @@
     useUserKey.set(localUseKey);
     
     if (localUseKey) {
-      toasts.success('Your API key has been saved!');
+      showSuccess('Your API key has been saved!');
     } else {
-      toasts.success('Settings saved. Using default API key.');
+      showSuccess('Settings saved. Using default API key.');
     }
     
     isOpen = false;
@@ -37,7 +37,7 @@
     localUseKey = false;
     userApiKey.set('');
     useUserKey.set(false);
-    toasts.success('API key cleared');
+    showSuccess('API key cleared');
   }
   
   function handleClose() {
