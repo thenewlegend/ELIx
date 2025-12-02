@@ -3,6 +3,7 @@
   import { showSuccess, showError } from '$lib/stores/toast.js';
   import { ripple } from '$lib/actions/ripple.js';
   import { theme, THEMES } from '$lib/stores/theme.js';
+  import { vibrateHeavy, vibrateMedium, vibrateWarning, vibrateLight } from '$lib/utils/haptics.js';
   
   let { isOpen = $bindable(false) } = $props();
   
@@ -17,10 +18,12 @@
   
   function handleSave() {
     if (localUseKey && !localKey.trim()) {
+      vibrateWarning();
       showError('Please enter an API key or disable "Use my API key"');
       return;
     }
     
+    vibrateHeavy();
     userApiKey.set(localKey.trim());
     useUserKey.set(localUseKey);
     
@@ -34,6 +37,7 @@
   }
   
   function handleClear() {
+    vibrateMedium();
     localKey = '';
     localUseKey = false;
     userApiKey.set('');
@@ -42,6 +46,7 @@
   }
   
   function handleClose() {
+    vibrateLight();
     isOpen = false;
   }
   
@@ -86,7 +91,7 @@
             <button 
               class="theme-option" 
               class:selected={$theme === themeOption}
-              onclick={() => theme.set(themeOption)}
+              onclick={() => { vibrateHeavy(); theme.set(themeOption); }}
               use:ripple
               aria-label="Select {themeOption} theme"
             >
@@ -109,6 +114,7 @@
         <button 
           class="m3-button text-button" 
           onclick={() => {
+            vibrateMedium();
             localStorage.removeItem('elix_intro_seen');
             location.reload();
           }}
@@ -128,6 +134,7 @@
             <input 
               type="checkbox" 
               bind:checked={localUseKey}
+              onchange={() => vibrateMedium()}
               class="toggle-input"
             />
             <span class="toggle-slider"></span>

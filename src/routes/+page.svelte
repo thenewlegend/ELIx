@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { vibrateHeavy, vibrateLight } from '$lib/utils/haptics.js';
   
   let cardsVisible = false;
   
@@ -19,7 +20,7 @@
 
   <div class="card-grid">
     <!-- Explain Card -->
-    <a href="/explain" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 0">
+    <a href="/explain" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 0" onclick={() => vibrateHeavy()}>
       <div class="card-content">
         <div class="icon-container primary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
@@ -32,7 +33,7 @@
     </a>
 
     <!-- Versus Card -->
-    <a href="/versus" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 1">
+    <a href="/versus" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 1" onclick={() => vibrateHeavy()}>
       <div class="card-content">
         <div class="icon-container secondary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
@@ -45,7 +46,7 @@
     </a>
 
     <!-- Persona Card -->
-    <a href="/persona" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 2">
+    <a href="/persona" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 2" onclick={() => vibrateHeavy()}>
       <div class="card-content">
         <div class="icon-container tertiary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
@@ -58,7 +59,7 @@
     </a>
 
     <!-- Battle Card -->
-    <a href="/battle" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 3">
+    <a href="/battle" class="m3-card interactive" class:visible={cardsVisible} style="--delay: 3" onclick={() => vibrateHeavy()}>
       <div class="card-content">
         <div class="icon-container secondary-container">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
@@ -71,7 +72,7 @@
     </a>
 
     <!-- Coming Soon Card -->
-    <div class="m3-card disabled" class:visible={cardsVisible} style="--delay: 4">
+    <div class="m3-card disabled" class:visible={cardsVisible} style="--delay: 4" role="button" tabindex="0" onclick={() => vibrateLight()} onkeydown={(e) => e.key === 'Enter' && vibrateLight()}>
       <div class="card-content">
         <div class="icon-container tertiary-container" style="background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface-variant);">
           <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">

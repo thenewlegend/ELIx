@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   import { ripple } from '$lib/actions/ripple.js';
+  import { vibrateMedium, vibrateHeavy } from '$lib/utils/haptics.js';
 
   let visible = $state(false);
   let currentStep = $state(0);
@@ -49,8 +50,10 @@
 
   function handleNext() {
     if (currentStep < steps.length - 1) {
+      vibrateMedium();
       currentStep++;
     } else {
+      vibrateHeavy();
       handleFinish();
     }
   }

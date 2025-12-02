@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
+  import { vibrateSuccess, vibrateError, vibrateWarning, vibrateLight } from '$lib/utils/haptics.js';
   
   export let message = '';
   export let type = 'info'; // 'success', 'error', 'warning', 'info'
@@ -17,6 +18,11 @@
   };
   
   onMount(() => {
+    // Trigger haptic based on toast type
+    if (type === 'success') vibrateSuccess();
+    else if (type === 'error') vibrateError();
+    else if (type === 'warning') vibrateWarning();
+    
     if (duration > 0) {
       setTimeout(() => {
         visible = false;
@@ -26,6 +32,7 @@
   });
   
   function dismiss() {
+    vibrateLight();
     visible = false;
     setTimeout(onDismiss, 300);
   }

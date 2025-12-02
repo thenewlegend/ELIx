@@ -1,7 +1,7 @@
 <script>
   import { marked } from 'marked';
   import { ripple } from '$lib/actions/ripple.js';
-  import { vibrateLight, vibrateSuccess, vibrateError } from '$lib/utils/haptics.js';
+  import { vibrateHeavy, vibrateSuccess, vibrateError } from '$lib/utils/haptics.js';
   import { showSuccess, showError } from '$lib/stores/toast.js';
   import { getApiKeyConfig } from '$lib/stores/apiKey.js';
   import { updateRateLimitFromHeaders } from '$lib/stores/rateLimit.js';
@@ -25,7 +25,7 @@
   async function handleSubmit() {
     loading = true;
     error = '';
-    vibrateLight();
+    vibrateHeavy();
     
     // Update displayed ages only on submit
     displayedAgeA = ageA;

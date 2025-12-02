@@ -1,9 +1,9 @@
 <script>
   import { rateLimit, fetchRateLimitStatus } from '$lib/stores/rateLimit.js';
-  import { useUserKey } from '$lib/stores/apiKey.js';
-  import { toasts } from '$lib/stores/toast.js';
+  import { useUserKey } from '$lib/stores/apiKey.js';  import { toasts } from '$lib/stores/toast.js';
   import { fade, slide } from 'svelte/transition';
   import { onMount, onDestroy } from 'svelte';
+  import { vibrateWarning, vibrateError } from '$lib/utils/haptics.js';
 
   // Don't show if using user key
   $: show = $rateLimit.isVisible && !$useUserKey;
@@ -28,6 +28,7 @@
   let timeRemaining = '';
   let interval;
   let resetToastShown = false;
+  let lastWarningCount = null; // Track last warning to prevent duplicate vibrations
 
   function updateTime() {
     if (!$rateLimit.resetTime) {
@@ -69,6 +70,19 @@
       fetchRateLimitStatus();
     }
   });
+  
+  // Watch for rate limit changes and trigger haptics
+  $: {
+    if (!$useUserKey) {
+      if ($rateLimit.remaining === 0 && lastWarningCount !== 0) {
+        vibrateError();
+        lastWarningCount = 0;
+      } else if ($rateLimit.remaining < 3 && $rateLimit.remaining > 0 && lastWarningCount !== $rateLimit.remaining) {
+        vibrateWarning();
+        lastWarningCount = $rateLimit.remaining;
+      }
+    }
+  }
 
   onDestroy(() => {
     if (interval) clearInterval(interval);
