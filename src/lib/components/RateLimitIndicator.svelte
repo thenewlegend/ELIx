@@ -6,29 +6,37 @@
   import { vibrateWarning, vibrateError } from '$lib/utils/haptics.js';
 
   // Don't show if using user key
-  $: show = $rateLimit.isVisible && !$useUserKey;
-  $: percentage = ($rateLimit.remaining / $rateLimit.limit) * 100;
+  const show = $derived($rateLimit.isVisible && !$useUserKey);
+  const percentage = $derived(($rateLimit.remaining / $rateLimit.limit) * 100);
   
   // Color based on remaining
-  $: color = $rateLimit.remaining === 0 ? 'var(--md-sys-color-error)' : 
-             $rateLimit.remaining < 3 ? 'var(--md-sys-color-error)' : 
-             $rateLimit.remaining < 5 ? 'var(--md-sys-color-tertiary)' : 
-             'var(--md-sys-color-primary)';
-             
-  $: containerColor = $rateLimit.remaining === 0 ? 'var(--md-sys-color-error-container)' : 
-                      $rateLimit.remaining < 3 ? 'var(--md-sys-color-error-container)' : 
-                      $rateLimit.remaining < 5 ? 'var(--md-sys-color-tertiary-container)' : 
-                      'var(--md-sys-color-primary-container)';
+  const color = $derived(
+    $rateLimit.remaining === 0 ? 'var(--md-sys-color-error)' : 
+    $rateLimit.remaining < 3 ? 'var(--md-sys-color-error)' : 
+    $rateLimit.remaining < 5 ? 'var(--md-sys-color-tertiary)' : 
+    'var(--md-sys-color-primary)'
+  );
+              
+  const containerColor = $derived(
+    $rateLimit.remaining === 0 ? 'var(--md-sys-color-error-container)' : 
+    $rateLimit.remaining < 3 ? 'var(--md-sys-color-error-container)' : 
+    $rateLimit.remaining < 5 ? 'var(--md-sys-color-tertiary-container)' : 
+    'var(--md-sys-color-primary-container)'
+  );
                       
-  $: onContainerColor = $rateLimit.remaining === 0 ? 'var(--md-sys-color-on-error-container)' : 
-                        $rateLimit.remaining < 3 ? 'var(--md-sys-color-on-error-container)' : 
-                        $rateLimit.remaining < 5 ? 'var(--md-sys-color-on-tertiary-container)' : 
-                        'var(--md-sys-color-on-primary-container)';
+  const onContainerColor = $derived(
+    $rateLimit.remaining === 0 ? 'var(--md-sys-color-on-error-container)' : 
+    $rateLimit.remaining < 3 ? 'var(--md-sys-color-on-error-container)' : 
+    $rateLimit.remaining < 5 ? 'var(--md-sys-color-on-tertiary-container)' : 
+    'var(--md-sys-color-on-primary-container)'
+  );
 
-  let timeRemaining = '';
+  let timeRemaining = $state('');
   let interval;
   let resetToastShown = false;
-  let lastWarningCount = null; // Track last warning to prevent duplicate vibrations
+  let lastWarningCount = $state(null); // Track last warning to prevent duplicate vibrations
+  let expanded = $state(true); // Start expanded
+  let collapseTimer;
 
   function updateTime() {
     if (!$rateLimit.resetTime) {
@@ -69,10 +77,15 @@
     if (show) {
       fetchRateLimitStatus();
     }
+    
+    // Auto-collapse after 4 seconds
+    collapseTimer = setTimeout(() => {
+      expanded = false;
+    }, 4000);
   });
   
   // Watch for rate limit changes and trigger haptics
-  $: {
+  $effect(() => {
     if (!$useUserKey) {
       if ($rateLimit.remaining === 0 && lastWarningCount !== 0) {
         vibrateError();
@@ -82,18 +95,31 @@
         lastWarningCount = $rateLimit.remaining;
       }
     }
+  });
+  
+  function toggleExpanded() {
+    expanded = !expanded;
+    // Clear auto-collapse timer if user manually interacts
+    if (collapseTimer) {
+      clearTimeout(collapseTimer);
+      collapseTimer = null;
+    }
   }
 
   onDestroy(() => {
     if (interval) clearInterval(interval);
+    if (collapseTimer) clearTimeout(collapseTimer);
   });
 </script>
 
 {#if show}
-  <div 
+  <button 
     class="rate-limit-pill" 
+    class:collapsed={!expanded}
     transition:slide={{ axis: 'y', duration: 300 }}
     style="--pill-color: {color}; --pill-bg: {containerColor}; --pill-text: {onContainerColor}"
+    onclick={toggleExpanded}
+    aria-label={expanded ? 'Collapse rate limit indicator' : 'Expand rate limit indicator'}
   >
     <div class="circular-chart">
       <svg viewBox="0 0 36 36" class="circular-chart-svg">
@@ -111,15 +137,17 @@
       </svg>
       <span class="count">{$rateLimit.remaining}</span>
     </div>
-    <div class="text-content">
-      <span class="label">Public API Limit</span>
-      {#if $rateLimit.remaining === 0}
-        <span class="sub-label">Resets in {timeRemaining}</span>
-      {:else}
-        <span class="sub-label">{$rateLimit.remaining}/{$rateLimit.limit} remaining</span>
-      {/if}
-    </div>
-  </div>
+    {#if expanded}
+      <div class="text-content">
+        <span class="label">Public API Limit</span>
+        {#if $rateLimit.remaining === 0}
+          <span class="sub-label">Resets in {timeRemaining}</span>
+        {:else}
+          <span class="sub-label">{$rateLimit.remaining}/{$rateLimit.limit} remaining</span>
+        {/if}
+      </div>
+    {/if}
+  </button>
 {/if}
 
 <style>
@@ -137,8 +165,30 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     z-index: 900;
     font-family: var(--md-sys-typescale-label-large-font);
-    pointer-events: none; /* Let clicks pass through if needed, or remove if interactive */
+    pointer-events: auto;
     border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    outline: none;
+  }
+  
+  .rate-limit-pill:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transform: translateY(-2px);
+  }
+  
+  .rate-limit-pill:active {
+    transform: translateY(0) scale(0.96);
+  }
+  
+  /* Collapsed state - small circular badge */
+  .rate-limit-pill.collapsed {
+    padding: 8px;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+    gap: 0;
   }
 
   .circular-chart {
@@ -204,10 +254,13 @@
 
   @media (max-width: 640px) {
     .rate-limit-pill {
-      top: 72px; /* Below navbar */
-      right: 16px;
-      bottom: auto;
-      left: auto;
+      bottom: 16px;
+      left: 16px;
+    }
+    
+    .rate-limit-pill.collapsed {
+      width: 40px;
+      height: 40px;
     }
   }
 </style>
