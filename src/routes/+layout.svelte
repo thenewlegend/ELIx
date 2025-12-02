@@ -18,11 +18,15 @@
 </svelte:head>
 
 <nav class="m3-navbar">
-	<a href="/" class="m3-nav-link">Home</a>
-	<a href="/explain" class="m3-nav-link">Explain</a>
-	<a href="/versus" class="m3-nav-link">Versus</a>
-	<a href="/battle" class="m3-nav-link">Battle</a>
-	<a href="/persona" class="m3-nav-link">Persona</a>
+	<a href="/" class="app-brand-link" aria-label="ELI-X Home">
+		<div class="brand-icon">
+			<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+				<path d="M480-120 200-272v-240L40-600l440-240 440 240-160 88v240L480-120Zm0-332 274-148-274-148-274 148 274 148Zm0 241 200-108v-151L480-360 280-470v151l200 108Zm0-241Zm0 90Zm0 0Z"/>
+			</svg>
+		</div>
+		<span class="brand-text">HOME</span>
+	</a>
+
 	<div class="nav-spacer"></div>
 	<a 
 		href="https://github.com/thenewlegend/ELIx" 
@@ -95,32 +99,42 @@
 		-webkit-overflow-scrolling: touch;
 	}
 
-	.m3-nav-link {
-		color: var(--md-sys-color-on-surface);
+	.app-brand-link {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 		text-decoration: none;
-		font-family: var(--md-sys-typescale-label-large-font);
-		font-weight: 500;
+		color: var(--md-sys-color-on-surface);
+		padding: 8px 16px 8px 12px;
+		border-radius: 24px;
+		transition: all var(--transition-fast);
 		margin-right: 16px;
-		padding: 8px 12px;
-		border-radius: 20px;
-		transition: background-color var(--transition-fast),
-		            color var(--transition-fast),
-		            transform var(--transition-fast);
-		white-space: nowrap;
+		position: relative;
+		overflow: hidden;
 		flex-shrink: 0;
 	}
 
-	.m3-nav-link:last-child {
-		margin-right: 0;
-	}
-
-	.m3-nav-link:hover {
+	.app-brand-link:hover {
 		background-color: var(--md-sys-color-secondary-container);
 		color: var(--md-sys-color-on-secondary-container);
 	}
 
-	.m3-nav-link:active {
-		transform: scale(0.95);
+	.app-brand-link:active {
+		transform: scale(0.96);
+	}
+
+	.brand-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.brand-text {
+		font-family: 'Roboto', sans-serif;
+		font-weight: 700;
+		font-size: 1.25rem;
+		letter-spacing: -0.5px;
+		line-height: 1;
 	}
 
 	.nav-spacer {
@@ -228,9 +242,9 @@
 			padding: 0 24px;
 		}
 
-		.m3-nav-link {
+		.app-brand-link {
 			margin-right: 24px;
-			padding: 8px 16px;
+			padding: 8px 20px 8px 16px;
 		}
 	}
 </style>
