@@ -1,6 +1,5 @@
 <script>
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import Toast from '$lib/components/Toast.svelte';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
 	import RateLimitIndicator from '$lib/components/RateLimitIndicator.svelte';
@@ -15,7 +14,6 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-	<link rel="icon" href={favicon} />
 </svelte:head>
 
 <nav class="m3-navbar">

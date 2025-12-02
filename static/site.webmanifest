@@ -1,0 +1,82 @@
+{
+    "name": "ELI-X",
+    "short_name": "ELI-X",
+    "description": "Complex topics, simplified for any age. Powered by Google Gemini AI.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#FFFBFE",
+    "theme_color": "#6750A4",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "categories": [
+        "education",
+        "productivity"
+    ],
+    "shortcuts": [
+        {
+            "name": "Explain",
+            "short_name": "Explain",
+            "description": "Get simple explanations for any topic",
+            "url": "/explain",
+            "icons": [
+                {
+                    "src": "/favicon.svg",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Versus",
+            "short_name": "Versus",
+            "description": "Compare explanations side-by-side",
+            "url": "/versus",
+            "icons": [
+                {
+                    "src": "/favicon.svg",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Persona",
+            "short_name": "Persona",
+            "description": "Character-driven explanations",
+            "url": "/persona",
+            "icons": [
+                {
+                    "src": "/favicon.svg",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Battle",
+            "short_name": "Battle",
+            "description": "Persona debates",
+            "url": "/battle",
+            "icons": [
+                {
+                    "src": "/favicon.svg",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ]
+}
