@@ -156,7 +156,7 @@
     margin: 0 0 16px 0;
   }
 
-  /* Text Fields (Outlined) */
+  /* Text Fields (Outlined) - Modernized */
   .m3-text-field-container {
     margin-bottom: 24px;
   }
@@ -164,16 +164,26 @@
   .m3-text-field {
     position: relative;
     border: 1px solid var(--md-sys-color-outline);
-    border-radius: 4px;
+    border-radius: 12px;
     height: 56px;
     display: flex;
     align-items: center;
-    transition: border-color 0.2s;
+    transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: transparent;
+  }
+  
+  .m3-text-field:hover {
+    background-color: rgba(103, 80, 164, 0.04);
+    border-color: var(--md-sys-color-on-surface);
   }
 
   .m3-text-field:focus-within {
     border-color: var(--md-sys-color-primary);
     border-width: 2px;
+    background-color: transparent;
+    box-shadow: 
+      0 0 0 3px rgba(103, 80, 164, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   .m3-text-field input {
@@ -199,7 +209,7 @@
     font-family: var(--md-sys-typescale-body-large-font);
     font-size: var(--md-sys-typescale-body-large-size);
     color: var(--md-sys-color-on-surface-variant);
-    transition: all 0.2s ease-out;
+    transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
     z-index: 2;
   }

@@ -91,7 +91,11 @@
               <option value={p.id}>{p.icon} {p.name}</option>
             {/each}
           </select>
-          <div class="m3-select-arrow">▼</div>
+          <div class="m3-select-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+              <path d="M480-360 280-560h400L480-360Z"/>
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -174,16 +178,26 @@
   .m3-text-field {
     position: relative;
     border: 1px solid var(--md-sys-color-outline);
-    border-radius: 4px;
+    border-radius: 12px;
     height: 56px;
     display: flex;
     align-items: center;
-    transition: border-color 0.2s;
+    transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: transparent;
+  }
+  
+  .m3-text-field:hover {
+    background-color: rgba(103, 80, 164, 0.04);
+    border-color: var(--md-sys-color-on-surface);
   }
 
   .m3-text-field:focus-within {
     border-color: var(--md-sys-color-primary);
     border-width: 2px;
+    background-color: transparent;
+    box-shadow: 
+      0 0 0 3px rgba(103, 80, 164, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   .m3-text-field input {
@@ -221,19 +235,31 @@
     color: var(--md-sys-color-primary);
   }
 
-  /* Select Styling */
+  /* Select Styling - Modernized */
   .m3-select-container {
     position: relative;
     border: 1px solid var(--md-sys-color-outline);
-    border-radius: 4px;
+    border-radius: 12px;
     height: 56px;
     display: flex;
     align-items: center;
+    transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: transparent;
+    cursor: pointer;
+  }
+  
+  .m3-select-container:hover {
+    background-color: rgba(103, 80, 164, 0.04);
+    border-color: var(--md-sys-color-on-surface);
   }
 
   .m3-select-container:focus-within {
     border-color: var(--md-sys-color-primary);
     border-width: 2px;
+    background-color: transparent;
+    box-shadow: 
+      0 0 0 3px rgba(103, 80, 164, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   .m3-select {
@@ -268,7 +294,14 @@
     right: 16px;
     color: var(--md-sys-color-on-surface-variant);
     pointer-events: none;
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .m3-select-arrow svg {
+    display: block;
   }
 
   .m3-button-filled {
