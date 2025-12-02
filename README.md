@@ -62,37 +62,6 @@ AI Model:  Google Gemini 2.5 Flash
 Runtime:   Node.js
 ```
 
-### Project Structure
-
-```
-ELIx/
-├── src/
-│   ├── lib/
-│   │   ├── components/
-│   │   │   ├── Toast.svelte          # Toast notification component
-│   │   │   ├── Skeleton.svelte       # Loading skeleton component
-│   │   │   ├── SettingsModal.svelte  # Settings & Theme configuration
-│   │   │   └── SplashScreen.svelte   # Intro walkthrough component
-│   │   ├── stores/
-│   │   │   ├── toast.js              # Global toast state management
-│   │   │   └── theme.js              # Theme state management
-│   │   ├── actions/
-│   │   │   └── ripple.js             # Material ripple effect action
-│   │   └── utils/
-│   │       └── haptics.js            # Haptic feedback utility
-│   ├── routes/
-│   │   ├── +layout.svelte            # Global layout with navbar & toasts
-│   │   ├── +page.svelte              # Landing page with mode cards
-│   │   ├── explain/+page.svelte      # Standard explanation mode
-│   │   ├── versus/+page.svelte       # Side-by-side comparison
-│   │   ├── persona/+page.svelte      # Character-driven explanations
-│   │   ├── battle/+page.svelte       # Persona vs Persona debates
-│   │   └── api/
-│   │       └── explain/+server.js    # Gemini API integration
-│   └── routes/layout.css             # M3 design tokens & animations
-└── IDEAS.md                          # Future feature ideas
-```
-
 ## 🚀 Getting Started
 
 ### Prerequisites
