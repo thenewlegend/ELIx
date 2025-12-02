@@ -28,6 +28,13 @@ ELI-X is an AI-powered web application that transforms complex topics into easy-
   - 👴 Boomer vs 🛹 Zoomer
   - ☀️ Optimist vs 🌧️ Pessimist
 
+### 🌗 Thematic Support
+
+- **Light Mode**: Clean, standard Material Design 3 light theme
+- **Dark Mode**: Deep, rich dark theme for low-light environments
+- **AMOLED Mode**: Pure black theme for OLED screens and battery saving
+- **System Sync**: Automatically matches your device's preference
+
 ### 🎨 Premium UI/UX
 
 - **Material Design 3**: Modern, polished interface with M3 color tokens and typography
@@ -63,9 +70,12 @@ ELIx/
 │   ├── lib/
 │   │   ├── components/
 │   │   │   ├── Toast.svelte          # Toast notification component
-│   │   │   └── Skeleton.svelte       # Loading skeleton component
+│   │   │   ├── Skeleton.svelte       # Loading skeleton component
+│   │   │   ├── SettingsModal.svelte  # Settings & Theme configuration
+│   │   │   └── SplashScreen.svelte   # Intro walkthrough component
 │   │   ├── stores/
-│   │   │   └── toast.js              # Global toast state management
+│   │   │   ├── toast.js              # Global toast state management
+│   │   │   └── theme.js              # Theme state management
 │   │   ├── actions/
 │   │   │   └── ripple.js             # Material ripple effect action
 │   │   └── utils/
@@ -82,31 +92,6 @@ ELIx/
 │   └── routes/layout.css             # M3 design tokens & animations
 └── IDEAS.md                          # Future feature ideas
 ```
-
-### API Flow
-
-```mermaid
-graph LR
-    A[User Input] --> B[SvelteKit Frontend]
-    B --> C[API Route /api/explain]
-    C --> D[Gemini 2.5 Flash]
-    D --> E[Persona-Specific Prompt]
-    E --> F[AI Response]
-    F --> C
-    C --> B
-    B --> G[Formatted Display]
-```
-
-### Key Design Decisions
-
-1. **Server-Side API Proxy**: Gemini API key stored securely as environment variable
-2. **Progressive Enhancement**: All interactive features degrade gracefully
-3. **Mobile-First**: Responsive design starts at 320px width
-4. **Svelte Actions**: Reusable behaviors (ripple effect) via `use:` directive
-5. **Stores for Global State**: Toast notifications managed via Svelte stores
-6. **CSS Custom Properties**: M3 design tokens for consistent theming
-
----
 
 ## 🚀 Getting Started
 
@@ -175,32 +160,6 @@ Topic: "Social Media"
 Philosopher vs Scientist
 → Two contrasting perspectives in debate format
 ```
-
----
-
-## 🎨 UI Polish Features
-
-### Implemented Enhancements
-
-✅ **Micro-interactions**
-- Button press feedback (scale 0.96 on active)
-- Card lift on hover with layered shadows
-- Input focus animations
-
-✅ **Motion Design**
-- Staggered entrance animations (fade-in-up)
-- Skeleton loading screens
-- Smooth page transitions
-
-✅ **Interaction Feedback**
-- Material ripple effects
-- Toast notifications (success/error)
-- Haptic feedback on mobile
-
-✅ **Visual Polish**
-- Glassmorphism navbar (backdrop blur)
-- Animated gradients
-- Responsive typography with `clamp()`
 
 ---
 

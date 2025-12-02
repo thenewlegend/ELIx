@@ -3,6 +3,7 @@
 	import Toast from '$lib/components/Toast.svelte';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
 	import RateLimitIndicator from '$lib/components/RateLimitIndicator.svelte';
+	import SplashScreen from '$lib/components/SplashScreen.svelte';
 	import { toasts } from '$lib/stores/toast.js';
 	import { useUserKey } from '$lib/stores/apiKey.js';
 	
@@ -69,6 +70,9 @@
 
 <!-- Rate Limit Indicator -->
 <RateLimitIndicator />
+
+<!-- Splash Screen -->
+<SplashScreen />
 
 <style>
 	.m3-navbar {
